@@ -29,6 +29,10 @@ function formatTime(timestamp: string) {
   });
 }
 
+function fingerprintValue(req: TLSRequest) {
+  return req.ja4_fingerprint || req.ja3_hash;
+}
+
 export function RecentRequests() {
   const { data, isLoading } = useSWR<TLSRequest[]>(
     "/api/requests/recent",
@@ -55,7 +59,7 @@ export function RecentRequests() {
               <TableRow className="border-border/50 hover:bg-transparent">
                 <TableHead className="text-muted-foreground">Time</TableHead>
                 <TableHead className="text-muted-foreground">Source</TableHead>
-                <TableHead className="text-muted-foreground">JA3 Hash</TableHead>
+                <TableHead className="text-muted-foreground">JA4 Hash</TableHead>
                 <TableHead className="text-right text-muted-foreground">
                   Score
                 </TableHead>
@@ -74,10 +78,10 @@ export function RecentRequests() {
                     {req.source_ip}
                   </TableCell>
                   <TableCell
-                    className="max-w-[180px] truncate font-mono text-xs text-muted-foreground"
-                    title={req.ja3_hash}
+                    className="max-w-45 truncate font-mono text-xs text-muted-foreground"
+                    title={fingerprintValue(req)}
                   >
-                    {req.ja3_hash}
+                    {fingerprintValue(req)}
                   </TableCell>
                   <TableCell className="text-right">
                     <ThreatScore score={req.threat_score} />

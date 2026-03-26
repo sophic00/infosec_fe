@@ -20,6 +20,10 @@ import { Progress } from "@/components/ui/progress";
 import { fetcher } from "@/lib/api";
 import type { FingerprintEntry } from "@/lib/types";
 
+function fingerprintValue(fp: FingerprintEntry) {
+  return fp.ja4_fingerprint || fp.ja3_hash;
+}
+
 export function CommonFingerprints() {
   const { data, isLoading } = useSWR<FingerprintEntry[]>(
     "/api/fingerprints/top-common",
@@ -34,7 +38,7 @@ export function CommonFingerprints() {
       <CardHeader className="pb-3">
         <CardTitle className="text-lg">Common Fingerprints</CardTitle>
         <CardDescription>
-          Most frequently observed JA3 fingerprints
+          Most frequently observed JA4 fingerprints
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -50,7 +54,7 @@ export function CommonFingerprints() {
               <TableRow className="border-border/50 hover:bg-transparent">
                 <TableHead className="text-muted-foreground">Label</TableHead>
                 <TableHead className="text-muted-foreground">
-                  JA3 Hash
+                  JA4 Hash
                 </TableHead>
                 <TableHead className="text-muted-foreground">
                   Frequency
@@ -62,13 +66,13 @@ export function CommonFingerprints() {
             </TableHeader>
             <TableBody>
               {data?.map((fp) => (
-                <TableRow key={fp.ja3_hash} className="border-border/50">
+                <TableRow key={fingerprintValue(fp)} className="border-border/50">
                   <TableCell className="font-medium">{fp.label}</TableCell>
                   <TableCell
-                    className="max-w-[160px] truncate font-mono text-xs text-muted-foreground"
-                    title={fp.ja3_hash}
+                    className="max-w-40 truncate font-mono text-xs text-muted-foreground"
+                    title={fingerprintValue(fp)}
                   >
-                    {fp.ja3_hash}
+                    {fingerprintValue(fp)}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3">

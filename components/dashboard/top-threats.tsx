@@ -20,6 +20,10 @@ import { ThreatBadge } from "@/components/dashboard/threat-badge";
 import { fetcher } from "@/lib/api";
 import type { TLSRequest } from "@/lib/types";
 
+function fingerprintValue(req: TLSRequest) {
+  return req.ja4_fingerprint || req.ja3_hash;
+}
+
 export function TopThreats() {
   const { data, isLoading } = useSWR<TLSRequest[]>(
     "/api/requests/top-threats",
@@ -52,7 +56,7 @@ export function TopThreats() {
                 </TableHead>
                 <TableHead className="text-muted-foreground">Source</TableHead>
                 <TableHead className="text-muted-foreground">
-                  JA3 Hash
+                  JA4 Hash
                 </TableHead>
                 <TableHead className="text-right text-muted-foreground">
                   Verdict
@@ -74,10 +78,10 @@ export function TopThreats() {
                     {req.source_ip}
                   </TableCell>
                   <TableCell
-                    className="max-w-[160px] truncate font-mono text-xs text-muted-foreground"
-                    title={req.ja3_hash}
+                    className="max-w-40 truncate font-mono text-xs text-muted-foreground"
+                    title={fingerprintValue(req)}
                   >
-                    {req.ja3_hash}
+                    {fingerprintValue(req)}
                   </TableCell>
                   <TableCell className="text-right">
                     <ThreatBadge verdict={req.verdict} />
